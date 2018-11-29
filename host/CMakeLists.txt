@@ -96,6 +96,7 @@ add_library(oehost STATIC
   ../common/datetime.c
   ../common/kdf.c
   ../common/safecrt.c
+  asym_keys.c
   dupenv.c
   error.c
   files.c
@@ -111,7 +112,6 @@ add_library(oehost STATIC
   crypto/sha.c
   ${PLATFORM_SRC})
 
-# Link libraries
 target_link_libraries(oehost PUBLIC oe_includes)
 
 if (UNIX)

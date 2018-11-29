@@ -24,6 +24,7 @@
 #include <openenclave/internal/thread.h>
 #include <openenclave/internal/trace.h>
 #include <openenclave/internal/utils.h>
+#include "../../asym_keys.h"
 #include "../../sgx/report.h"
 #include "asmdefs.h"
 #include "atexit.h"
@@ -461,6 +462,15 @@ static void _handle_ecall(
         case OE_ECALL_DEVICE_NOTIFICATION:
         {
             _handle_oe_device_notification(arg_in);
+        }
+        case OE_ECALL_GET_PUBLIC_KEY_BY_POLICY:
+        {
+            oe_handle_get_public_key_by_policy(arg_in);
+            break;
+        }
+        case OE_ECALL_GET_PUBLIC_KEY:
+        {
+            oe_handle_get_public_key(arg_in);
             break;
         }
         default:
