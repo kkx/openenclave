@@ -67,14 +67,16 @@ if (OE_SGX)
       sgx/linux/enter.S
       sgx/linux/entersim.S
       sgx/linux/exception.c
-      sgx/linux/sgxioctl.c)
+      sgx/linux/sgxioctl.c
+      sgx/linux/sgxquoteproviderloader.c)
   else()
     list(APPEND PLATFORM_SRC
       sgx/windows/aep.asm
       sgx/windows/aesm.c
       sgx/windows/enter.asm
       sgx/windows/entersim.asm
-      sgx/windows/exception.c)
+      sgx/windows/exception.c
+      sgx/windows/sgxquoteproviderloader.c)
   endif()
 
   set(PLATFORM_FLAGS "-m64")
