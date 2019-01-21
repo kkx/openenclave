@@ -3,15 +3,22 @@ def PowerShellWrapper(psCmd) {
     bat "powershell.exe -NonInteractive -ExecutionPolicy Bypass -Command \"\$ErrorActionPreference='Stop';[Console]::OutputEncoding=[System.Text.Encoding]::UTF8;$psCmd;EXIT \$global:LastExitCode\""
 }
 
+<<<<<<< HEAD
 def ACCTest(String label, String compiler, String unit, String suite) {
     def c_compiler
     def cpp_compiler
     stage("$label $compiler $unit $suite") {
         node("$label") {
+=======
+def ACCTest(String label, String compiler, String platform_mode, String build_type) {
+    stage("${label} ${compiler} ${platform_mode} ${build_type}") {
+        node("${label}") {
+>>>>>>> 9cad3e1ed... Reformat variables
             cleanWs()
             checkout scm
 
             timeout(15) {
+<<<<<<< HEAD
                 dir('build') {
                     if (compiler == "gcc") {
                         c_compiler = "gcc"
@@ -28,23 +35,32 @@ def ACCTest(String label, String compiler, String unit, String suite) {
                         """
                     }
                 }
+=======
+                sh "./scripts/test-build-config -p ${platform_mode} -b ${build_type} --compiler=${compiler} --disable_sim"
+>>>>>>> 9cad3e1ed... Reformat variables
             }
 
         }
     }
 }
 
+<<<<<<< HEAD
 def simulationTest(String version, String compiler, String unit, String suite ) {
     def c_compiler
     def cpp_compiler
     stage("Sim Ubuntu$version $compiler $unit $suite") {
+=======
+def simulationTest(String version, String compiler, String platform_mode, String build_type ) {
+    stage("Sim Ubuntu${version} ${compiler} ${platform_mode} ${build_type}") {
+>>>>>>> 9cad3e1ed... Reformat variables
         node {
             cleanWs()
             checkout scm
 
-            def oetoolsSim = docker.build("oetools-simulation-$version", "--build-arg ubuntu_version=$version -f .jenkins/Dockerfile .")
+            def oetoolsSim = docker.build("oetools-simulation-${version}", "--build-arg ubuntu_version=${version} -f .jenkins/Dockerfile .")
             oetoolsSim.inside {
                 timeout(15) {
+<<<<<<< HEAD
                     dir('build') {
                         if (compiler == "gcc") {
                             c_compiler = "gcc"
@@ -61,6 +77,9 @@ def simulationTest(String version, String compiler, String unit, String suite ) 
                             """
                         }
                     }
+=======
+                    sh "./scripts/test-build-config -p ${platform_mode} -b ${build_type} --compiler=${compiler}"
+>>>>>>> 9cad3e1ed... Reformat variables
                 }
             }
         }
@@ -68,12 +87,12 @@ def simulationTest(String version, String compiler, String unit, String suite ) 
 }
 
 def ACCContainerTest(String label, String version) {
-    stage("$label Container RelWithDebInfo") {
-        node("$label") {
+    stage("${label} Container RelWithDebInfo") {
+        node("${label}") {
             cleanWs()
             checkout scm
 
-            def oetoolsContainer = docker.build("oetools-containertest-$version", "--build-arg ubuntu_version=$version -f .jenkins/Dockerfile .")
+            def oetoolsContainer = docker.build("oetools-containertest-${version}", "--build-arg ubuntu_version=${version} -f .jenkins/Dockerfile .")
             oetoolsContainer.inside('--device /dev/sgx:/dev/sgx') {
                 timeout(15) {
                     dir('build') {
@@ -97,7 +116,7 @@ def checkDevFlows(String version) {
             cleanWs()
             checkout scm
 
-            def oetoolsCheck = docker.build("oetools-check-$version", "--build-arg ubuntu_version=$version -f .jenkins/Dockerfile .")
+            def oetoolsCheck = docker.build("oetools-check-${version}", "--build-arg ubuntu_version=${version} -f .jenkins/Dockerfile .")
             oetoolsCheck.inside {
                 timeout(2) {
                     sh './scripts/check-ci'
@@ -111,7 +130,7 @@ def checkDevFlows(String version) {
             cleanWs()
             checkout scm
 
-            def buildImage = docker.build("oetools-base-$version", "--build-arg ubuntu_version=$version -f .jenkins/Dockerfile.scripts .")
+            def buildImage = docker.build("oetools-base-${version}", "--build-arg ubuntu_version=${version} -f .jenkins/Dockerfile.scripts .")
 
             buildImage.inside {
                 timeout(15) {
@@ -132,14 +151,15 @@ def checkDevFlows(String version) {
     }
 }
 
-def win2016CrossPlatform(String version, String suite) {
-    stage("Linux SGX1 $suite") {
+def win2016CrossPlatform(String version, String build_type) {
+    stage("Linux SGX1 ${build_type}") {
         node {
             cleanWs()
             checkout scm
-            def oetoolsWincp = docker.build("oetools-wincp-$version", "--build-arg ubuntu_version=$version -f .jenkins/Dockerfile .")
+            def oetoolsWincp = docker.build("oetools-wincp-${version}", "--build-arg ubuntu_version=${version} -f .jenkins/Dockerfile .")
             oetoolsWincp.inside {
                 timeout(15) {
+<<<<<<< HEAD
                     dir('build') {
                         withEnv(["CC=clang-7","CXX=clang++-7"]) {
                             sh """
@@ -149,27 +169,31 @@ def win2016CrossPlatform(String version, String suite) {
                         }
                     }
                     stash includes: 'build/tests/**', name: "linux${suite}${version}"
+=======
+                    sh "./scripts/test-build-config -p SGX1FLC -b ${build_type} --compiler=clang-7"
+                    stash includes: 'build/tests/**', name: "linux${build_type}${version}"
+>>>>>>> 9cad3e1ed... Reformat variables
                 }
             }
         }
     }
-    stage("Windows $suite") {
+    stage("Windows ${build_type}") {
         node('SGXFLC-Windows') {
             cleanWs()
             checkout scm
-            unstash "linux${suite}${version}"
+            unstash "linux${build_type}${version}"
             PowerShellWrapper('mv build linuxbin')
-            PowerShellWrapper("./scripts/test-build-config.ps1 -add_windows_enclave_tests -linux_bin_dir $WORKSPACE/linuxbin/tests -build_type $suite")
+            PowerShellWrapper("./scripts/test-build-config.ps1 -add_windows_enclave_tests -linux_bin_dir $WORKSPACE/linuxbin/tests -build_type ${build_type}")
        }
     }
 }
 
-def win2016Test(String suite) {
-    stage("Windows $suite") {
+def win2016Test(String build_type) {
+    stage("Windows ${build_type}") {
         node('SGXFLC-Windows') {
             cleanWs()
             checkout scm
-            PowerShellWrapper("./scripts/test-build-config.ps1 -add_windows_enclave_tests -linux_bin_dir $WORKSPACE/linuxbin/tests -build_type $suite -build_enclaves")
+            PowerShellWrapper("./scripts/test-build-config.ps1 -add_windows_enclave_tests -linux_bin_dir $WORKSPACE/linuxbin/tests -build_type ${build_type} -build_enclaves")
        }
     }
 }
