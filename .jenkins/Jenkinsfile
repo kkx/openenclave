@@ -3,22 +3,15 @@ def PowerShellWrapper(psCmd) {
     bat "powershell.exe -NonInteractive -ExecutionPolicy Bypass -Command \"\$ErrorActionPreference='Stop';[Console]::OutputEncoding=[System.Text.Encoding]::UTF8;$psCmd;EXIT \$global:LastExitCode\""
 }
 
-<<<<<<< HEAD
-def ACCTest(String label, String compiler, String unit, String suite) {
+def ACCTest(String label, String compiler, String platform_mode, String build_type) {
     def c_compiler
     def cpp_compiler
-    stage("$label $compiler $unit $suite") {
+    stage("$label ${compiler} ${platform_mode} ${build_type}") {
         node("$label") {
-=======
-def ACCTest(String label, String compiler, String platform_mode, String build_type) {
-    stage("${label} ${compiler} ${platform_mode} ${build_type}") {
-        node("${label}") {
->>>>>>> 9cad3e1ed... Reformat variables
             cleanWs()
             checkout scm
 
             timeout(15) {
-<<<<<<< HEAD
                 dir('build') {
                     if (compiler == "gcc") {
                         c_compiler = "gcc"
@@ -29,30 +22,22 @@ def ACCTest(String label, String compiler, String platform_mode, String build_ty
                     }
                     withEnv(["CC=${c_compiler}","CXX=${cpp_compiler}"]) {
                         sh """
-                        cmake .. -DCMAKE_BUILD_TYPE=${suite}
+                        cmake .. -DCMAKE_BUILD_TYPE=${build_type}
                         make
                         ctest --output-on-failure
                         """
                     }
                 }
-=======
-                sh "./scripts/test-build-config -p ${platform_mode} -b ${build_type} --compiler=${compiler} --disable_sim"
->>>>>>> 9cad3e1ed... Reformat variables
             }
 
         }
     }
 }
 
-<<<<<<< HEAD
-def simulationTest(String version, String compiler, String unit, String suite ) {
+def simulationTest(String version, String compiler, String platform_mode, String build_type ) {
     def c_compiler
     def cpp_compiler
-    stage("Sim Ubuntu$version $compiler $unit $suite") {
-=======
-def simulationTest(String version, String compiler, String platform_mode, String build_type ) {
     stage("Sim Ubuntu${version} ${compiler} ${platform_mode} ${build_type}") {
->>>>>>> 9cad3e1ed... Reformat variables
         node {
             cleanWs()
             checkout scm
@@ -60,7 +45,6 @@ def simulationTest(String version, String compiler, String platform_mode, String
             def oetoolsSim = docker.build("oetools-simulation-${version}", "--build-arg ubuntu_version=${version} -f .jenkins/Dockerfile .")
             oetoolsSim.inside {
                 timeout(15) {
-<<<<<<< HEAD
                     dir('build') {
                         if (compiler == "gcc") {
                             c_compiler = "gcc"
@@ -71,15 +55,12 @@ def simulationTest(String version, String compiler, String platform_mode, String
                         }
                         withEnv(["CC=${c_compiler}","CXX=${cpp_compiler}","OE_SIMULATION=1"]) {
                             sh """
-                            cmake .. -DCMAKE_BUILD_TYPE=${suite} -DUSE_LIBSGX=OFF
+                            cmake .. -DCMAKE_BUILD_TYPE=${build_type} -DUSE_LIBSGX=OFF
                             make
                             ctest --output-on-failure
                             """
                         }
                     }
-=======
-                    sh "./scripts/test-build-config -p ${platform_mode} -b ${build_type} --compiler=${compiler}"
->>>>>>> 9cad3e1ed... Reformat variables
                 }
             }
         }
@@ -159,7 +140,6 @@ def win2016CrossPlatform(String version, String build_type) {
             def oetoolsWincp = docker.build("oetools-wincp-${version}", "--build-arg ubuntu_version=${version} -f .jenkins/Dockerfile .")
             oetoolsWincp.inside {
                 timeout(15) {
-<<<<<<< HEAD
                     dir('build') {
                         withEnv(["CC=clang-7","CXX=clang++-7"]) {
                             sh """
@@ -168,11 +148,7 @@ def win2016CrossPlatform(String version, String build_type) {
                             """
                         }
                     }
-                    stash includes: 'build/tests/**', name: "linux${suite}${version}"
-=======
-                    sh "./scripts/test-build-config -p SGX1FLC -b ${build_type} --compiler=clang-7"
                     stash includes: 'build/tests/**', name: "linux${build_type}${version}"
->>>>>>> 9cad3e1ed... Reformat variables
                 }
             }
         }
