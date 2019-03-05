@@ -30,7 +30,6 @@ typedef enum _oe_hostsock_op
     OE_HOSTSOCK_OP_GETPEERNAME,
     OE_HOSTSOCK_OP_GETSOCKNAME,
     OE_HOSTSOCK_OP_SHUTDOWN_DEVICE
-
 } oe_hostsock_op_t;
 
 typedef struct _oe_hostsock_args

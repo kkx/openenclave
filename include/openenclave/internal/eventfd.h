@@ -22,7 +22,6 @@ extern "C"
 
     int oe_register_eventfd_device(void);
     oe_device_t* oe_get_eventfd_device(void);
-
     int oe_eventfd(unsigned int count, int flags);
     int oe_eventfd_read(int fd, oe_eventfd_t* value);
     int oe_eventfd_write(int fd, oe_eventfd_t value);

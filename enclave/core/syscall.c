@@ -418,7 +418,6 @@ static long _syscall(
             ret = oe_socketpair(domain, type, protocol, sv);
             goto done;
         }
-
         case OE_SYS_shutdown:
         {
             int sockfd = (int)arg1;
