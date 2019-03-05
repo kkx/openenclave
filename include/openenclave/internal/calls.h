@@ -81,6 +81,7 @@ typedef enum _oe_func
     OE_ECALL_DEVICE_NOTIFICATION,
     OE_ECALL_GET_PUBLIC_KEY_BY_POLICY,
     OE_ECALL_GET_PUBLIC_KEY,
+    OE_ECALL_DEVICE_NOTIFICATION,
     /* Caution: always add new ECALL function numbers here */
 
     OE_OCALL_CALL_HOST_FUNCTION = OE_OCALL_BASE,

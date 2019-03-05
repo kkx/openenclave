@@ -471,6 +471,10 @@ static void _handle_ecall(
         case OE_ECALL_GET_PUBLIC_KEY:
         {
             oe_handle_get_public_key(arg_in);
+        }
+        case OE_ECALL_DEVICE_NOTIFICATION:
+        {
+            _handle_oe_device_notification(arg_in);
             break;
         }
         default:
