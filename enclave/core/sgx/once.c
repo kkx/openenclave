@@ -11,27 +11,26 @@ oe_result_t oe_once(oe_once_t* once, void (*func)(void))
         return OE_INVALID_PARAMETER;
 
     /* Double checked locking (DCLP). */
-    oe_once_t o = *once;
-
     /* DCLP Acquire barrier. */
     OE_ATOMIC_MEMORY_BARRIER_ACQUIRE();
-    if (o == 0)
+    if (*once != 2)
     {
-        static oe_spinlock_t _lock = OE_SPINLOCK_INITIALIZER;
-
-        oe_spin_lock(&_lock);
-
-        if (*once == 0)
+        oe_once_t retval = __sync_val_compare_and_swap(once, 0, 1);
+        if (retval == 0)
         {
             if (func)
                 func();
 
-            /* DCLP Release barrier. */
             OE_ATOMIC_MEMORY_BARRIER_RELEASE();
-            *once = 1;
+            *once = 2;  
         }
-
-        oe_spin_unlock(&_lock);
+        else if (retval == 1)
+        {
+            while (__sync_val_compare_and_swap(once, 2, 2) != 2)
+            {
+               asm volatile("pause");
+            }
+        }
     }
 
     return OE_OK;
