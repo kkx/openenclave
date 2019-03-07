@@ -17,6 +17,7 @@ if (WIN32_SIMULATION)
 endif ()
 
 add_subdirectory(mem)
+add_subdirectory(qv)
 add_subdirectory(safecrt)
 add_subdirectory(safemath)
 add_subdirectory(str)
