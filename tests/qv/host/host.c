@@ -26,7 +26,7 @@ int main(int argc, const char* argv[])
     size_t fsize;
 
     // Positive test
-    ptr = fopen("/home/johnkord/generated_report.bytes","rb");
+    ptr = fopen("../../../tests/qv/host/generated_report.bytes","rb");
     OE_TEST(ptr != NULL);
 
     fseek(ptr, 0, SEEK_END);
@@ -42,7 +42,7 @@ int main(int argc, const char* argv[])
 
 
     // Negative test
-    ptr = fopen("/home/johnkord/generated_report.bytes_bad","rb");
+    ptr = fopen("../../../tests/qv/host/generated_report.bytes_bad","rb");
     OE_TEST(ptr != NULL);
 
     fseek(ptr, 0, SEEK_END);
