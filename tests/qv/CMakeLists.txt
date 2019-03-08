@@ -3,4 +3,4 @@
 
 add_subdirectory(host)
 
-add_test(tests/qv qv)
+add_test(tests/qv host/qv)
