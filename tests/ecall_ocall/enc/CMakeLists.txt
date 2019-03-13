@@ -3,3 +3,4 @@
 
 add_enclave(TARGET ecall_ocall_enc CXX SOURCES enc.cpp)
 target_compile_features(ecall_ocall_enc PRIVATE cxx_auto_type)
+target_compile_options(ecall_ocall_enc PRIVATE -ftls-model=local-exec)

@@ -15,7 +15,7 @@
 
 unsigned EnclaveId = ~0u;
 
-static TLSWrapper PerThreadFlowId;
+static thread_local  oe_thread_key_t PerThreadFlowId;
 
 // class to verify OCalls in static Initializers
 struct StaticInitOcaller
@@ -77,7 +77,7 @@ OE_ECALL void EncParallelExecution(void* Args_)
         !oe_is_outside_enclave((void*)args.release, sizeof(unsigned)))
         return;
 
-    unsigned old_flow_id = PerThreadFlowId.GetU();
+    unsigned old_flow_id = static_cast<unsigned>(PerThreadFlowId);
     if (old_flow_id)
     {
         printf(
@@ -87,13 +87,13 @@ OE_ECALL void EncParallelExecution(void* Args_)
             old_flow_id);
         return;
     }
-    PerThreadFlowId.Set(args.flow_id);
+    PerThreadFlowId = (args.flow_id);
 
     __atomic_add_fetch(args.counter, 1, __ATOMIC_SEQ_CST);
     while (!*args.release)
         ;
 
-    old_flow_id = PerThreadFlowId.GetU();
+    old_flow_id = static_cast<unsigned>(PerThreadFlowId);
     if (old_flow_id != args.flow_id)
     {
         printf(
@@ -103,7 +103,7 @@ OE_ECALL void EncParallelExecution(void* Args_)
             old_flow_id);
         return;
     }
-    PerThreadFlowId.Set(0u);
+    PerThreadFlowId=(0u);
 
     args_host->result = OE_OK;
 }
