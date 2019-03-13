@@ -114,6 +114,8 @@ add_library(oehost STATIC
 
 target_link_libraries(oehost PUBLIC oe_includes)
 
+# TODO: Replace these with `find_package` and add as dependencies to
+# the CMake package.
 if (UNIX)
   find_library(CRYPTO_LIB NAMES crypto)
   add_library(crypto SHARED IMPORTED)
