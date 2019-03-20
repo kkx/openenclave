@@ -96,6 +96,7 @@ add_library(oehost STATIC
   ../common/datetime.c
   ../common/kdf.c
   ../common/safecrt.c
+  asym_keys.c
   dupenv.c
   error.c
   files.c
@@ -111,9 +112,10 @@ add_library(oehost STATIC
   crypto/sha.c
   ${PLATFORM_SRC})
 
-# Link libraries
 target_link_libraries(oehost PUBLIC oe_includes)
 
+# TODO: Replace these with `find_package` and add as dependencies to
+# the CMake package.
 if (UNIX)
   find_library(CRYPTO_LIB NAMES crypto)
   add_library(crypto SHARED IMPORTED)
@@ -159,7 +161,11 @@ endif ()
 
 # Compile definitions and options
 target_compile_definitions(oehost
-  PUBLIC -DOE_API_VERSION=2
+  PUBLIC
+  # NOTE: This definition is public to the rest of our project's
+  # targets, but should not yet be exposed to consumers of our
+  # package.
+  $<BUILD_INTERFACE:OE_API_VERSION=2>
   PRIVATE
   OE_BUILD_UNTRUSTED
   OE_REPO_BRANCH_NAME="${GIT_BRANCH}"
