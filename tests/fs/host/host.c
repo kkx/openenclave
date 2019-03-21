@@ -6,6 +6,7 @@
 #include <openenclave/internal/tests.h>
 #include <stdio.h>
 #include "fs_u.h"
+int rmdir(const char* path);
 
 int main(int argc, const char* argv[])
 {
@@ -24,6 +25,7 @@ int main(int argc, const char* argv[])
     const char* src_dir = argv[2];
     const char* tmp_dir = argv[3];
 
+    (void)rmdir(tmp_dir); // Tests assume directory does not exist
     oe_fs_install_sgxfs();
 
     r = oe_create_fs_enclave(enclave_path, type, flags, NULL, 0, &enclave);

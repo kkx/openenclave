@@ -966,9 +966,6 @@ static int _hostsock_dup(oe_device_t* sock_, oe_device_t** new_sock)
         }
     }
 
-    /* Release the sock_ object. */
-    oe_free(sock);
-
     ret = 0;
 
 done:

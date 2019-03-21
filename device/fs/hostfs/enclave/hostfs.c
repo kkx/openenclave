@@ -522,9 +522,6 @@ static int _hostfs_dup(oe_device_t* file_, oe_device_t** new_file)
         }
     }
 
-    /* Release the file_ object. */
-    oe_free(file);
-
     ret = 0;
 
 done:
@@ -1576,10 +1573,7 @@ static uint64_t _hostfs_readystate(oe_device_t* file_)
 
 static oe_fs_ops_t _ops = {
     .base.clone = _hostfs_clone,
-<<<<<<< HEAD
     .base.dup = _hostfs_dup,
-=======
->>>>>>> new feature.io branch
     .base.release = _hostfs_release,
     .base.shutdown = _hostfs_shutdown,
     .base.ioctl = _hostfs_ioctl,

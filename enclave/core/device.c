@@ -12,7 +12,7 @@
 
 static const size_t ELEMENT_SIZE = sizeof(oe_device_t*);
 static const size_t CHUNK_SIZE = 8;
-static oe_array_t _arr = OE_ARRAY_INITIALIZER(ELEMENT_SIZE, CHUNK_SIZE);
+static oe_array_t _dev_arr = OE_ARRAY_INITIALIZER(ELEMENT_SIZE, CHUNK_SIZE);
 static oe_spinlock_t _lock = OE_SPINLOCK_INITIALIZER;
 static bool _initialized = false;
 
@@ -21,17 +21,17 @@ static oe_thread_key_t _device_id_key = OE_THREADKEY_INITIALIZER;
 
 OE_INLINE oe_device_t** _table(void)
 {
-    return (oe_device_t**)_arr.data;
+    return (oe_device_t**)_dev_arr.data;
 }
 
 OE_INLINE size_t _table_size(void)
 {
-    return _arr.size;
+    return _dev_arr.size;
 }
 
 static void _free_table(void)
 {
-    oe_array_free(&_arr);
+    oe_array_free(&_dev_arr);
 }
 
 static int _init_table()
@@ -42,7 +42,7 @@ static int _init_table()
         {
             if (_initialized == false)
             {
-                if (oe_array_resize(&_arr, CHUNK_SIZE) != 0)
+                if (oe_array_resize(&_dev_arr, CHUNK_SIZE) != 0)
                 {
                     oe_assert("_init_table()" == NULL);
                     oe_abort();
@@ -72,9 +72,9 @@ uint64_t oe_allocate_devid(uint64_t devid)
     oe_spin_lock(&_lock);
     locked = true;
 
-    if (devid >= _arr.size)
+    if (devid >= _dev_arr.size)
     {
-        if (oe_array_resize(&_arr, devid + 1) != 0)
+        if (oe_array_resize(&_dev_arr, devid + 1) != 0)
         {
             oe_errno = ENOMEM;
             goto done;
@@ -111,7 +111,7 @@ int oe_release_devid(uint64_t devid)
     oe_spin_lock(&_lock);
     locked = true;
 
-    if (devid >= _arr.size)
+    if (devid >= _dev_arr.size)
     {
         oe_errno = EINVAL;
         goto done;

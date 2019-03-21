@@ -472,11 +472,6 @@ static void _handle_ecall(
         {
             oe_handle_get_public_key(arg_in);
         }
-        case OE_ECALL_DEVICE_NOTIFICATION:
-        {
-            _handle_oe_device_notification(arg_in);
-            break;
-        }
         default:
         {
             /* No function found with the number */

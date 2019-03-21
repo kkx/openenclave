@@ -17,23 +17,23 @@ typedef struct _entry
 
 static const size_t ELEMENT_SIZE = sizeof(entry_t);
 static const size_t CHUNK_SIZE = 8;
-static oe_array_t _arr = OE_ARRAY_INITIALIZER(ELEMENT_SIZE, CHUNK_SIZE);
+static oe_array_t _fd_arr = OE_ARRAY_INITIALIZER(ELEMENT_SIZE, CHUNK_SIZE);
 static oe_spinlock_t _lock = OE_SPINLOCK_INITIALIZER;
 static bool _initialized = false;
 
 OE_INLINE entry_t* _table(void)
 {
-    return (entry_t*)_arr.data;
+    return (entry_t*)_fd_arr.data;
 }
 
 OE_INLINE size_t _table_size(void)
 {
-    return _arr.size;
+    return _fd_arr.size;
 }
 
 static void _free_table(void)
 {
-    oe_array_free(&_arr);
+    oe_array_free(&_fd_arr);
 }
 
 static int _init_table()
@@ -44,7 +44,7 @@ static int _init_table()
         {
             if (_initialized == false)
             {
-                if (oe_array_resize(&_arr, CHUNK_SIZE) != 0)
+                if (oe_array_resize(&_fd_arr, CHUNK_SIZE) != 0)
                 {
                     oe_assert("_init_table()" == NULL);
                     oe_abort();
@@ -81,7 +81,7 @@ int oe_assign_fd_device(oe_device_t* device)
     /* If free slot not found, expand size of the file descriptor table. */
     if (index == _table_size())
     {
-        if (oe_array_resize(&_arr, _table_size() + CHUNK_SIZE) != 0)
+        if (oe_array_resize(&_fd_arr, _table_size() + CHUNK_SIZE) != 0)
         {
             oe_errno = ENOMEM;
             goto done;

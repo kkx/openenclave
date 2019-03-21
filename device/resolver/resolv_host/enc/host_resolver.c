@@ -8,6 +8,7 @@
 // clang-format on
 
 #include <openenclave/internal/device.h>
+#include <openenclave/corelibc/sys/socket.h>
 #include <openenclave/corelibc/netdb.h>
 #include <openenclave/internal/host_resolver.h>
 #include <openenclave/internal/resolver.h>
@@ -142,6 +143,11 @@ static ssize_t _hostresolv_getnameinfo(
         {
             oe_errno = ENOMEM;
             goto done;
+        }
+
+        if (sa->sa_family == OE_AF_HOST)
+        {
+            ((struct oe_sockaddr*)sa)->sa_family = OE_AF_INET;
         }
 
         //    int64_t ret;

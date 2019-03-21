@@ -194,23 +194,23 @@ struct _notification_node_chunk
 
 static const size_t ELEMENT_SIZE = sizeof(struct _notification_node*);
 static const size_t CHUNK_SIZE = 8;
-static oe_array_t _arr = OE_ARRAY_INITIALIZER(ELEMENT_SIZE, CHUNK_SIZE);
+static oe_array_t _notify_arr = OE_ARRAY_INITIALIZER(ELEMENT_SIZE, CHUNK_SIZE);
 static oe_spinlock_t _lock = OE_SPINLOCK_INITIALIZER;
 
 OE_INLINE struct _notification_node** _table(void)
 {
-    return (struct _notification_node**)_arr.data;
+    return (struct _notification_node**)_notify_arr.data;
 }
 
 #if 0
 OE_INLINE size_t _table_size(void)
 {
-    return _arr.size;
+    return _notify_arr.size;
 }
 
 static void _free_table(void)
 {
-    oe_array_free(&_arr);
+    oe_array_free(&_notify_arr);
 }
 
 #endif
@@ -221,9 +221,9 @@ static struct _notification_node** _notification_list(uint64_t epoll_id)
 {
     struct _notification_node** ret = NULL;
 
-    if (epoll_id >= _arr.size)
+    if (epoll_id >= _notify_arr.size)
     {
-        if (oe_array_resize(&_arr, epoll_id + 1) != 0)
+        if (oe_array_resize(&_notify_arr, epoll_id + 1) != 0)
         {
             oe_errno = ENOMEM;
             goto done;
@@ -239,9 +239,10 @@ done:
 
 //
 // We allocate an array of notification_nodes whose roots are accessed by the
-// array _arr indexed by the epoll fd We allocate the nodes from chunks. Since
-// the nodes are linked lists, we need to preserve addresses, so cannot use
-// oe_realloc on the actual list nodes. So we allocate chunks, invalidate the
+// array _notify_arr indexed by the epoll fd We allocate the nodes from chunks.
+// Since the nodes are linked lists, we need to preserve addresses, so cannot
+// use oe_realloc on the actual list nodes. So we allocate chunks, invalidate
+// the
 
 static struct _notification_node_chunk* pdevice_notice_chunks = NULL;
 static struct _notification_node_chunk* pdevice_notice_chunk_tail = NULL;
@@ -397,9 +398,9 @@ int oe_get_epoll_events(
     size_t i = 0;
     int locked = false;
 
-    if (epfd >= _arr.size)
+    if (epfd >= _notify_arr.size)
     {
-        if (oe_array_resize(&_arr, epfd + 1) != 0)
+        if (oe_array_resize(&_notify_arr, epfd + 1) != 0)
         {
             oe_errno = ENOMEM;
             return -1;
@@ -435,7 +436,7 @@ int oe_get_epoll_events(
     }
 
     ptail = plist; // We take from the front and invalidate the nodes as we go.
-                   // Then we put whats left onto the _arr array
+                   // Then we put whats left onto the _notify_arr array
     for (i = 0; ptail && i < numevents; i++)
     {
         pevents[i].events = ptail->notice.event_mask;
