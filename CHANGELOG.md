@@ -62,6 +62,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   of the Intel SGX DCAP packages on the system that generates the remote report,
   which as of the time of this change is version 1.0.1 and can be found here:
   https://download.01.org/intel-sgx/dcap-1.0.1/dcap_installer/ubuntuServer1604/
+- `oe-gdb` renamed to `oegdb` for consistency with other tools, such as `oesign`.
 
 ### Deprecated
 
