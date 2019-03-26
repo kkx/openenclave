@@ -62,6 +62,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   of the Intel SGX DCAP packages on the system that generates the remote report,
   which as of the time of this change is version 1.0.1 and can be found here:
   https://download.01.org/intel-sgx/dcap-1.0.1/dcap_installer/ubuntuServer1604/
+- Update pkg-config and cmake exports to include the following hardening build
+  flags by default:
+    - Enclaves will:
+       - Compile with `-D_FORITFY_SOURCE=2` (only effective if `-O2` is
+         specified) and `-fPIE` instead of `-fPIC`.
+       - Link with `-Wl,-z,noexecstack`, `-Wl,-z,relro` & `-Wl,-z,now`.
+    - Host apps will:
+       - Compile with `-D_FORTIFY_SOURCE=2` (only effective if `-O2` is
+         specified) and `-fstack-protector-strong`.
+       - Link with `-Wl,-z,noexecstack` & `-Wl,-z,relro`.
+       - Note that `-Wl,-z,now` is _not_ enabled by default, but app authors
+         should enable it themselves after assessing its startup impact.
 
 ### Deprecated
 
