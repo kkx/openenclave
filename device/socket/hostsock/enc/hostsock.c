@@ -1254,7 +1254,7 @@ static int _hostsock_getpeername(
             goto done;
         }
 
-        args->op = OE_HOSTSOCK_OP_ACCEPT;
+        args->op = OE_HOSTSOCK_OP_GETPEERNAME;
         args->u.getpeername.ret = -1;
         args->u.getpeername.host_fd = sock->host_fd;
         args->u.getpeername.addrlen = *addrlen;
@@ -1314,7 +1314,7 @@ static int _hostsock_getsockname(
             goto done;
         }
 
-        args->op = OE_HOSTSOCK_OP_ACCEPT;
+        args->op = OE_HOSTSOCK_OP_GETSOCKNAME;
         args->u.getsockname.ret = -1;
         args->u.getsockname.host_fd = sock->host_fd;
         args->u.getsockname.addrlen = *addrlen;

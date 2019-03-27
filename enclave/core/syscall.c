@@ -360,12 +360,6 @@ static long _syscall(
             const struct sockaddr* dest_add = (const struct sockaddr*)arg5;
             socklen_t addrlen = (socklen_t)arg6;
 
-            if (dest_add || addrlen)
-            {
-                oe_errno = EINVAL;
-                goto done;
-            }
-
             ret = oe_sendto(sockfd, buf, len, flags, dest_add, addrlen);
             goto done;
         }
