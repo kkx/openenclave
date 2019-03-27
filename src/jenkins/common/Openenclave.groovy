@@ -13,7 +13,6 @@ String dockerBuildArgs(String... args) {
 }
 
 String dockerImage(String tag, String dockerfile = ".jenkins/Dockerfile", String buildArgs = "") {
-    checkout scm
     return docker.build(tag, "${buildArgs} -f ${dockerfile} .")
 }
 
@@ -56,8 +55,6 @@ def Run(String compiler, String task, Integer timeoutMinutes = 30) {
         c_compiler = "gcc"
         cpp_compiler = "g++"
     }
-    cleanWs()
-    checkout scm
 
     withEnv(["CC=${c_compiler}","CXX=${cpp_compiler}"]) {
         timeout(timeoutMinutes) {
